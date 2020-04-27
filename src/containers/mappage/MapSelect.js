@@ -57,7 +57,33 @@ export default function MapSelect() {
   
   //DATA PARSING METHODS - All functions related to parsing the data needed by the different components
  
-  const getReportDates = (reportData) =>{
+  /*Here is the schema for the data needed to populate the map component:
+
+      [
+        [
+          state: 'OH',
+          districts: [
+            {
+                districtNumber: 1 , 
+                reports: 
+                [
+                  {...report1},
+                  {...report2},
+                ]
+            },
+            {
+                districtNumber: 2,
+                reports:
+                [
+                  {...report1},
+                  {...report2}
+                ] 
+            }
+          ]
+        ]
+      ]
+  */
+  const getReportDates = (reportData) =>{ /* Returns an array a unique report dates */
 
     let reportDates = reportData.map( (report) =>{
         return report.reported_date;
@@ -87,7 +113,7 @@ export default function MapSelect() {
     return(datesArr);
   }
 
-  const getReportStates = (reportData) => {
+  const getReportStates = (reportData) => { /* Returns an array of reports by state - {reportState: state, reports[...]} */
 
     let reportStates = reportData.map ( (report) =>{
       return report.district_state;
@@ -100,9 +126,9 @@ export default function MapSelect() {
 
     let reportStates = getReportStates(reportData);
 
-    let statesArr = reportStates.map( (report) =>{
+    let statesArr = reportStates.map( (state) =>{
       return(
-        {reportState: report, reports: []}
+        {reportState: state, reports: []}
       )
     })
 
@@ -113,7 +139,27 @@ export default function MapSelect() {
         }
       }))
     })
-    console.log(statesArr);
+    return(statesArr);
+  }
+
+  const getDistrictsByState = (reportData) =>{ /*Returns an array of objects of each states districts that have received a report - {reportState: state, districts: [1,2,3,4,...rest]} */
+    
+    let reportStates = getReportStates(reportData);
+    
+    let districtsByState = reportStates.map( (state) =>{
+      return (
+        {reportState: state, districts: []}
+      )
+    })
+
+    reportData.map((report) =>{
+      return(districtsByState.map( (statesObj)=>{
+        if(report.district_state === statesObj.reportState && statesObj.districts.includes(report.district) === false){
+          statesObj.districts.push(report.district)
+        }
+      }))
+    })
+    return(districtsByState);
   }
     
   //BUTTON METHODS
@@ -146,7 +192,6 @@ export default function MapSelect() {
   }else{
     return ( //Will pass the data to the Dashboard component  
       <DashboardWrapper>
-        {getReportsByState(reportData)}
         <Dashboard reportRequest={reportSelection} handleBack={handleBack} data={[{numberOfReports: reportData.length}, {reportsByDate : getReportsByDate(reportData)}]} /> 
       </DashboardWrapper>
     )
