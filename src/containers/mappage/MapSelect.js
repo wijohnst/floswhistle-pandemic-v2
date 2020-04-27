@@ -70,7 +70,7 @@ export default function MapSelect() {
 
     let reportDates = getReportDates(reportData);
 
-    let datesArr = reportDates.map( (report, index) =>{
+    let datesArr = reportDates.map( (report) =>{
       return(
           {reportDate: report, numberOfReports : 0}
         )
@@ -86,12 +86,36 @@ export default function MapSelect() {
     )
     return(datesArr);
   }
-    
-    
 
-    
-  
+  const getReportStates = (reportData) => {
 
+    let reportStates = reportData.map ( (report) =>{
+      return report.district_state;
+    })
+
+    return [...new Set(reportStates)]
+  }
+
+  const getReportsByState = (reportData) =>{
+
+    let reportStates = getReportStates(reportData);
+
+    let statesArr = reportStates.map( (report) =>{
+      return(
+        {reportState: report, reports: []}
+      )
+    })
+
+    reportData.map((report) =>{
+      return(statesArr.map( ( statesObj ) =>{
+        if(report.district_state === statesObj.reportState){
+          statesObj.reports.push(report)
+        }
+      }))
+    })
+    console.log(statesArr);
+  }
+    
   //BUTTON METHODS
     let handleSubmit = () =>{ 
     setReportSelection(selectRef.current.value)
@@ -122,6 +146,7 @@ export default function MapSelect() {
   }else{
     return ( //Will pass the data to the Dashboard component  
       <DashboardWrapper>
+        {getReportsByState(reportData)}
         <Dashboard reportRequest={reportSelection} handleBack={handleBack} data={[{numberOfReports: reportData.length}, {reportsByDate : getReportsByDate(reportData)}]} /> 
       </DashboardWrapper>
     )

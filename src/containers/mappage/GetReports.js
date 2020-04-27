@@ -16,7 +16,7 @@ export default function GetReports() {
     .catch(error => console.log(error));
   },[]);
   
-  console.log(reportData); 
+  // console.log(reportData); 
 
   if(reportData === null){
     return(
