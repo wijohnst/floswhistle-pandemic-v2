@@ -177,7 +177,11 @@ export default function MapSelect() {
       }
     })
 
-    return [...new Set(reportsArr)];
+    let filteredArr = reportsArr.filter( (x) =>{
+      return x !== undefined
+    })
+    
+    return filteredArr;
   
    }
 
