@@ -83,7 +83,7 @@ export default function MapSelect() {
         ]
       ]
   */
-  const getReportDates = (reportData) =>{ /* Returns an array a unique report dates */
+  const getReportDates = (reportData) =>{ /* Returns an array a unique report dates -- used to populate 'Reports By Date' field in Tally.js*/
 
     let reportDates = reportData.map( (report) =>{
         return report.reported_date;
@@ -151,7 +151,6 @@ export default function MapSelect() {
         {reportState: state, districts: []}
       )
     })
-
     reportData.map((report) =>{
       return(districtsByState.map( (statesObj)=>{
         if(report.district_state === statesObj.reportState && statesObj.districts.includes(report.district) === false){
@@ -160,6 +159,41 @@ export default function MapSelect() {
       }))
     })
     return(districtsByState);
+  }
+
+  const getMapData = (reportData) =>{
+
+    const states = getReportStates(reportData);
+    const districts = getDistrictsByState(reportData);
+    const stateReports = getReportsByState(reportData);
+    
+   const getReportsByDistrict = (district, reports) =>{
+    
+    const reportsArr = reports.map( (report) =>{
+      if(report.district === district){
+        return(
+          report
+        )
+      }
+    })
+
+    return [...new Set(reportsArr)];
+  
+   }
+
+    const mapDataArr = states.map( (key,index) =>{
+      return(
+          {state: key, districts: districts[index].districts.map( (district) =>{
+              return(
+                {districtNumber: district, reports: getReportsByDistrict(district, stateReports[index].reports)}
+              ) 
+            }
+          )
+        }
+      )
+    })
+
+    console.log(mapDataArr);
   }
     
   //BUTTON METHODS
@@ -192,6 +226,7 @@ export default function MapSelect() {
   }else{
     return ( //Will pass the data to the Dashboard component  
       <DashboardWrapper>
+        {getMapData(reportData)}
         <Dashboard reportRequest={reportSelection} handleBack={handleBack} data={[{numberOfReports: reportData.length}, {reportsByDate : getReportsByDate(reportData)}]} /> 
       </DashboardWrapper>
     )
