@@ -9,7 +9,7 @@ import ReportPledgePage from "./reportpledgepage/ReportPledgePage";
 import ReportFormPage from "./reportformpage/ReportFormPage";
 import ThankYouPage from "./thankyoupage/ThankYouPage";
 import MapSelect from "./mappage/MapSelect";
-import GetReports from "./mappage/GetReports"
+
 
 
 function App() {
@@ -22,7 +22,7 @@ function App() {
         <Route exact path="/report" component={ReportFormPage} />
         <Route exact path="/map" component={MapSelect} />
         <Route exact path="/thanks" component={ThankYouPage} />
-        <Route exact path = "/getReports" component={GetReports} />
+
       </Switch>
     </div>
   );

@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 
 import DistrictsMap from './DistrictsMap'
 import MapHeading from './MapHeading'
-import Tally from './Tally'
+
 
 import { getMapData } from './DataParser'
 
@@ -21,8 +21,10 @@ text-align: center;
 `
 export default function Dashboard(props) {
   
-  const {reportRequest, handleBack, data} = props; //Will also include data from API request @MapSelect.js
-
+  const {reportSelection, handleBack, reportData} = props; //Will also include data from API request @MapSelect.js
+  
+  console.log(`reportSelection @ dashboard = ${reportSelection}`);
+  
   const headingText = [{
                         heading: 'Shortages', 
                         sub: 'Percentage of respondents who reported any kind of shortage.'
@@ -38,11 +40,10 @@ export default function Dashboard(props) {
     <React.Fragment>
     <DashBoardWrapper>
       <HeadingWrapper>
-        <MapHeading headingText={headingText[reportRequest - 1]}/>
+        <MapHeading headingText={headingText[reportSelection - 1]}/>
       </HeadingWrapper>
-      <Tally numberOfReports={data[0].numberOfReports} reportsByDate={data[1].reportsByDate}/>
       <MapWrapper>
-        <DistrictsMap mapData={getMapData(data, new Date('03/01/2020'), new Date('04/01/2020'))} />{/* Pass map data to DistrictMap component */}
+        <DistrictsMap mapData={getMapData(reportData, reportSelection, new Date('03/01/2020'), new Date('05/01/2020'))} />
       </MapWrapper>
     </DashBoardWrapper>
     <BackButtonWrapper>

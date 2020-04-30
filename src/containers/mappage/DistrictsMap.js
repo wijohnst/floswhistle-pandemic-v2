@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import styled from 'styled-components'
 import DistrictsMap from './districts_map.svg'
 import {SvgLoader, SvgProxy} from 'react-svgmt'
@@ -10,14 +10,11 @@ overflow: scroll;
 
 export default function DistrictsMaps(props) {
   
-  const {mapData} = props;
-  console.log(mapData);
-  // const districtData = [{district: 'AL-01', rate: 5  },{district: 'AL-02', rate: 10}, {district: 'AL-03', rate: 20},
-  // {district: 'AL-04', rate: 30}, {district: 'AL-05', rate: 40}, {district: 'AL-06', rate: 50},{district: 'AL-07', rate: 60},{district: 'AZ-01', rate: 70 },{district: 'AZ-02', rate: 80 },{district: 'AZ-03', rate: 90 },{district: 'AZ-04', rate: 100},{district: 'AZ-05', rate: 10 },{district: 'AZ-06', rate: 20},{district: 'AZ-07', rate: 30},{district: 'AZ-08', rate: 40},{district: 'AZ-09', rate: 50}]; //dummy object that attempts to mock data returned from the API
-
+  const [mapData,] = useState(props.mapData);
+ 
   const getDistrictInfo = (districtId) =>{ //Filters the API data by congressional district ID the populates pop-up window with information
     
-    const targetDistrictInfo = mapData.filter(match => match.district === districtId);
+    const targetDistrictInfo = mapData.filter(match => match.district.districtId === districtId);
 
     return( //HTML for pop-up
       `<html>
@@ -35,18 +32,18 @@ export default function DistrictsMaps(props) {
         </style>
         <div class='tooltipInfoWrapper'>
         <h2><u>District Info</u></h2>
-        <p><b>District Name: </b>${targetDistrictInfo[0].district}</p> 
-        <p><b>Rate: </b>${targetDistrictInfo[0].rate}</p>
+        <p><b>District Name: </b>${targetDistrictInfo[0].district.districtId}</p> 
+        <p><b>Rate: </b>${targetDistrictInfo[0].rate}%</p>
         </div>
       </html>`
       );
 
   }
 
-  const genColor = (percentage) =>{ //Calculates the color of each district based on the percentage of respondents; could be less verbose by using an array method; consider refactoring
+  const genColor = (percentage) =>{ 
     
     if(percentage <= 0 ){
-      return '#cccccc'
+      return 'green'
     }else if(percentage > 0 && percentage <= 10){
       return '#FFE6E6'
     }else if(percentage > 10 && percentage <= 20){
@@ -75,10 +72,10 @@ export default function DistrictsMaps(props) {
   return (
     <MapWrapper>
       <SvgLoader path={DistrictsMap}>
-        {mapData.map((info) =>(
-            <React.Fragment key={`districtWrapper${info.district}`}>
+        {mapData.map((report) => (
+            <React.Fragment key={`districtWrapper${report.district.districtId}`}>
               <ReactToolTip html={true} />
-              <SvgProxy key={`#${info.district}`} selector={`#${info.district}`} fill={genColor(info.rate)} data-tip={getDistrictInfo(info.district)} /> {/*Queries for each districts ID in districts_map.svg and renders that district in a different color and with a tool tip*/}
+              <SvgProxy key={`#${report.district.districtId}`} selector={`#${report.district.districtId}`} fill={genColor(report.rate)} data-tip={getDistrictInfo(report.district.districtId)} />
             </React.Fragment>
         ))}
       </SvgLoader>
