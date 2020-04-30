@@ -1,9 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 
 import DistrictsMap from './DistrictsMap'
 import MapHeading from './MapHeading'
 import Tally from './Tally'
+
+import { getMapData } from './DataParser'
 
 const DashBoardWrapper = styled.div`
 display: flex;
@@ -40,7 +42,7 @@ export default function Dashboard(props) {
       </HeadingWrapper>
       <Tally numberOfReports={data[0].numberOfReports} reportsByDate={data[1].reportsByDate}/>
       <MapWrapper>
-        <DistrictsMap />{/* Pass map data to DistrictMap component */}
+        <DistrictsMap mapData={getMapData(data, new Date('03/01/2020'), new Date('04/01/2020'))} />{/* Pass map data to DistrictMap component */}
       </MapWrapper>
     </DashBoardWrapper>
     <BackButtonWrapper>

@@ -57,8 +57,7 @@ export default function Tally(props) {
   }
 
   const sortedReports = reportsByDate.sort(compare);
-  
-  console.log(sortedReports);
+
   const sliderRef = useRef(0);
   const [requestedReport, setRequestedReport] = useState(0);
 
