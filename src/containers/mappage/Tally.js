@@ -57,7 +57,7 @@ export default function Tally(props) {
   }
 
   const sortedReports = reportsByDate.sort(compare);
-  
+
   const sliderRef = useRef(0);
   const [requestedReport, setRequestedReport] = useState(0);
 
@@ -67,10 +67,10 @@ export default function Tally(props) {
       <h3><u>Map Info</u></h3>
       <ReportDateWrapper>
         <HeadingWrapper> 
-          <u>Date</u> <ReportText>{sortedReports[requestedReport].reportDate}</ReportText>
+          <u>Date</u> <ReportText>{reportsByDate[requestedReport].reportDate}</ReportText>
         </HeadingWrapper>
         <HeadingWrapper> 
-          <u>Reports by Date</u> <ReportText>{sortedReports[requestedReport].numberOfReports}</ReportText>
+          <u>Reports by Date</u> <ReportText>{reportsByDate[requestedReport].numberOfReports}</ReportText>
         </HeadingWrapper>
         <HeadingWrapper> 
           <u>Reports Total</u> <ReportText>{numberOfReports}</ReportText>

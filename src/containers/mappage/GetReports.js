@@ -1,5 +1,7 @@
 import React, {useState, useEffect } from 'react'
 
+import {getReportsTotal, getReportDates, validateReport, getReportsByDateRange, getDistrictsWithReports, getMapData} from './DataParser';
+
 export default function GetReports() {
   
   const [reportData, setReportData] = useState(null);
@@ -15,8 +17,6 @@ export default function GetReports() {
     })
     .catch(error => console.log(error));
   },[]);
-  
-  // console.log(reportData); 
 
   if(reportData === null){
     return(
@@ -24,7 +24,12 @@ export default function GetReports() {
     )
   }else{
     return(
-     <p>{reportData[0].district}</p>
+      <div>
+        <p>{`Report Total = ${getReportsTotal(reportData)}`}</p>
+        <p>{`Report Dates = ${getReportDates(reportData)}`}</p>
+        {/* {getDistrictsWithReports(reportData)} */}
+        {getMapData(reportData, new Date('03/01/2020'), new Date('04/01/2020'))}
+      </div>
     )
   }
 }

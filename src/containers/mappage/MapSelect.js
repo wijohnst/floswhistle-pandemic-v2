@@ -230,8 +230,7 @@ export default function MapSelect() {
   }else{
     return ( //Will pass the data to the Dashboard component  
       <DashboardWrapper>
-        {getMapData(reportData)}
-        <Dashboard reportRequest={reportSelection} handleBack={handleBack} data={[{numberOfReports: reportData.length}, {reportsByDate : getReportsByDate(reportData)}]} /> 
+        <Dashboard reportRequest={reportSelection} handleBack={handleBack} data={[{numberOfReports: reportData.length}, {reportsByDate : getReportsByDate(reportData)}, {mapData: getMapData(reportData)}]} /> 
       </DashboardWrapper>
     )
   }
