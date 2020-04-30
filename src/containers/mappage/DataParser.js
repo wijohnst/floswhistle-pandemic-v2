@@ -65,8 +65,6 @@ export const getNumberOfReportsPerDistrict = data =>{
 
 export const formatDistrictNumber = districtNumber =>{
   
-  console.log('Formatting district number...');
-
   let length = Math.log(districtNumber) * Math.LOG10E + 1 | 0;  
 
   if(length < 2){
@@ -81,27 +79,6 @@ export const formatDistrictNumber = districtNumber =>{
     return districtNumberString; 
 
   }
-}
-
-/*Function to evaluate an individual test based on the desired map (Testing vs. Shortages) - used to calculate the failure rate of each district*/
-
-export const validateReport = (targetMap , report, failCondition) =>{  
-  
-  console.log(`Validating report for ${targetMap}`)
-  
-  var targetProperties = targetMap === 'shortages' ? 'shortages' : 'test_data';
-
-  const toTest = report[targetProperties];
-
-  let testValues = Object.values(toTest);
-
- if(testValues.includes(failCondition)){
-  console.log('Test failed.')
-  return 'failed'
- }else{
-  console.log('Test passed.') 
-  return 'passed'
- }
 }
 
 /*Function to return an array of reports between two dates*/
@@ -142,11 +119,34 @@ export const getDistrictsWithReports = data =>{
   return result;
 }
 
+/*Function to evaluate an individual test based on the desired map (Testing vs. Shortages) - used to calculate the failure rate of each district*/
+
+export const validateReport = (reportRequest , report) =>{ 
+
+  console.log(`Report request @validateReport = ${reportRequest}`)
+  let targetProperties = (reportRequest === '1') ? 'shortages' : 'test_data';
+  
+  console.log(`Validating report for ${targetProperties}`)
+
+  var failCondition = (reportRequest === 1) ? false : true;
+
+  const toTest = report[targetProperties];
+
+  let testValues = Object.values(toTest);
+
+ if(testValues.includes(failCondition)){
+  return 'failed'
+ }else{
+  return 'passed'
+ }
+}
+
 /*Function that returns an data needed to populate map component */
 
-export const getMapData = (data,rangeStart, rangeEnd) =>{
+export const getMapData = (data, reportRequest, rangeStart, rangeEnd) =>{
 
-  console.log('Getting rates...')
+  console.log(`Report request @getMapData = ${reportRequest}`);
+
   const reports = getReportsByDateRange(data,rangeStart,rangeEnd);
 
   const reportsArr = Object.entries(reports).map(([key,val]) =>{
@@ -157,11 +157,11 @@ export const getMapData = (data,rangeStart, rangeEnd) =>{
 
   const districtReports = districtsWithReports.map(district => district);
 
-  const result = districtReports.map(report => report)
+  const districtRateObj = districtReports.map(report => report)
                                   .reduce((newObj, report, index) =>{
                                       const district = report.district;
                                       const reports = new Array(report.district.reports);
-                                      const validationArr = reports.map(report => validateReport('testing',report,true));
+                                      const validationArr = reports.map(report => validateReport(reportRequest,report));
                                       const denominator = validationArr.length;
                                       // const numerator = calcNumerator(validationArr);
                                       const numerator = validationArr.reduce((acc,cur) => {
@@ -176,5 +176,10 @@ export const getMapData = (data,rangeStart, rangeEnd) =>{
                                       return newObj;
                                   },{})
 
+  const result = Object.entries(districtRateObj).map(([key,val]) =>{
+    return val;
+  })
+
   console.log(result);
+  return result;
 }
